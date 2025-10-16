@@ -1,0 +1,847 @@
+run that code directly [<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas - JobMatch AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+
+        .cta-button {
+            padding: 16px 32px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-button:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 500px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* About Us Page */
+        .about-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .member-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e9ecef;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+            border: 3px solid #667eea;
+        }
+
+        .member-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .member-role {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* JobMatch AI Page */
+        .jobmatch-container {
+            max-width: 100%;
+        }
+
+        .jobmatch-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .opportunities-table {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr 0.8fr 0.8fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .opportunity-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr 0.8fr 0.8fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            align-items: center;
+            color: #333;
+        }
+
+        .opportunity-row:hover {
+            background: #f8fafc;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #6b7280;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        .gap-analysis {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .cv-editor {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .cover-letter {
+            border-left: 4px solid #0ea5e9;
+        }
+
+        .completion-panel {
+            border-left: 4px solid #10b981;
+        }
+
+        .match-high { color: #059669; font-weight: 600; }
+        .match-medium { color: #d97706; font-weight: 600; }
+        .match-low { color: #dc2626; font-weight: 600; }
+        .status-new { color: #d97706; }
+        .status-applied { color: #059669; }
+
+        .gap-item { 
+            color: #dc2626; 
+            margin: 5px 0;
+            padding: 5px;
+            background: #fef2f2;
+            border-radius: 4px;
+            border-left: 3px solid #dc2626;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            background: #f8fafc;
+            resize: vertical;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            background: #5a6268;
+        }
+
+        .panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .panel h3 {
+            color: #374151;
+            margin: 15px 0 10px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .table-header,
+            .opportunity-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="logo">ATLAS</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="showPage('home')">Home</button>
+                <button class="nav-btn" onclick="showPage('about')">About Us</button>
+                <button class="nav-btn" onclick="showPage('jobmatch')">Who's Looking For You</button>
+            </div>
+        </nav>
+
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="main-content">
+                <h1 class="hero-title">Welcome to Atlas</h1>
+                <p class="hero-subtitle">Revolutionizing the way talent meets opportunity. Our AI-powered platform connects you with your dream job through intelligent matching and automated applications.</p>
+                <button class="cta-button" onclick="showPage('jobmatch')">Discover Opportunities</button>
+            </div>
+        </div>
+
+        <!-- About Us Page -->
+        <div id="about" class="page">
+            <button class="back-button" onclick="showPage('home')">← Back to Home</button>
+            <div class="about-header">
+                <h1>Our Team</h1>
+                <p>The brilliant minds behind Atlas</p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo">👩‍💼</div>
+                    <div class="member-name">Sarah Chen</div>
+                    <div class="member-role">CEO & Founder</div>
+                    <p>Visionary leader with 10+ years in tech innovation and recruitment technology</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo">👨‍💻</div>
+                    <div class="member-name">Marcus Johnson</div>
+                    <div class="member-role">CTO</div>
+                    <p>AI and machine learning expert specializing in natural language processing</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo">👩‍🎨</div>
+                    <div class="member-name">Elena Rodriguez</div>
+                    <div class="member-role">Head of Product</div>
+                    <p>User experience and product strategy with background in HR technology</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo">👨‍🔧</div>
+                    <div class="member-name">David Kim</div>
+                    <div class="member-role">Lead Developer</div>
+                    <p>Full-stack development and system architecture expert</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- JobMatch AI Page -->
+        <div id="jobmatch" class="page">
+            <button class="back-button" onclick="showPage('home')">← Back to Home</button>
+            <div class="jobmatch-container">
+                <!-- Header -->
+                <div class="jobmatch-header">
+                    <h1>JobMatch AI - Opportunity Manager</h1>
+                    <p>Smart job matching with ATS-optimized applications</p>
+                </div>
+                
+                <!-- Opportunities Table -->
+                <div class="opportunities-table">
+                    <h2>Available Opportunities</h2>
+                    <div class="table-header">
+                        <div>Company</div>
+                        <div>Job Title</div>
+                        <div>Date Posted</div>
+                        <div>Match %</div>
+                        <div>Status</div>
+                        <div>Action</div>
+                    </div>
+                    
+                    <div class="opportunity-row" data-job="1">
+                        <div>Tech Corp</div>
+                        <div>Senior Python Developer</div>
+                        <div>2024-10-11</div>
+                        <div class="match-high">85%</div>
+                        <div class="status-new">New</div>
+                        <div><button class="btn btn-primary" onclick="showGapAnalysis(1)">Apply</button></div>
+                    </div>
+                    
+                    <div class="opportunity-row" data-job="2">
+                        <div>Data Systems Inc</div>
+                        <div>Data Scientist</div>
+                        <div>2024-10-10</div>
+                        <div class="match-high">92%</div>
+                        <div class="status-new">New</div>
+                        <div><button class="btn btn-primary" onclick="showGapAnalysis(2)">Apply</button></div>
+                    </div>
+                    
+                    <div class="opportunity-row" data-job="3">
+                        <div>Cloud Solutions</div>
+                        <div>DevOps Engineer</div>
+                        <div>2024-10-09</div>
+                        <div class="match-medium">78%</div>
+                        <div class="status-new">New</div>
+                        <div><button class="btn btn-primary" onclick="showGapAnalysis(3)">Apply</button></div>
+                    </div>
+
+                    <div class="opportunity-row" data-job="4">
+                        <div>FinTech Global</div>
+                        <div>Full Stack Developer</div>
+                        <div>2024-10-08</div>
+                        <div class="match-high">88%</div>
+                        <div class="status-new">New</div>
+                        <div><button class="btn btn-primary" onclick="showGapAnalysis(4)">Apply</button></div>
+                    </div>
+                </div>
+                
+                <!-- Gap Analysis Panel -->
+                <div id="gapAnalysisPanel" class="panel gap-analysis">
+                    <h2>🎯 Gap Analysis: <span id="analysisJobTitle">Senior Python Developer</span></h2>
+                    <div style="background: #fffbeb; padding: 20px; border-radius: 8px; margin: 15px 0; border: 1px solid #fcd34d;">
+                        <h3>📊 GAP SUMMARY</h3>
+                        <p>• Required Skills Missing: <strong>3</strong></p>
+                        <p>• Experience Gaps: <strong>2+ years</strong></p>
+                        <p>• Certification Gaps: <strong>1</strong></p>
+                        
+                        <h3 style="margin-top: 20px;">🔍 MISSING REQUIREMENTS</h3>
+                        <div class="gap-item">• Docker containerization</div>
+                        <div class="gap-item">• Advanced AWS services (EC2, S3, Lambda)</div>
+                        <div class="gap-item">• Kubernetes orchestration</div>
+                        <div class="gap-item">• 2+ years cloud architecture experience</div>
+                        <div class="gap-item">• AWS Certified Solutions Architect certification</div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="alignCV()">Align CV & Continue</button>
+                        <button class="btn btn-secondary" onclick="disregardOpportunity()">Disregard Opportunity</button>
+                        <button class="btn btn-outline" onclick="hideAllPanels()">Back to Opportunities</button>
+                    </div>
+                </div>
+                
+                <!-- CV Alignment Editor -->
+                <div id="cvEditorPanel" class="panel cv-editor">
+                    <h2>📝 ATS-Optimized CV Editor</h2>
+                    <p style="color: #666; margin-bottom: 15px;">Edit your CV below. The content has been optimized for Applicant Tracking Systems while maintaining authenticity.</p>
+                    <textarea id="cvEditor">
+# PROFESSIONAL SUMMARY
+Dynamic and results-oriented Python Developer with 5+ years of expertise in AWS cloud solutions and scalable application development. Skilled in Python, SQL, AWS, React, JavaScript. Currently expanding expertise in Docker and Kubernetes containerization.
+
+# TECHNICAL SKILLS
+• Programming: Python, JavaScript, SQL
+• Cloud: AWS (EC2, S3, RDS), CloudFormation
+• Frameworks: React, Node.js, Django, Flask
+• DevOps: Docker, Kubernetes, CI/CD pipelines
+• Databases: PostgreSQL, MongoDB, Redis
+• Tools: Git, JIRA, Docker, Jenkins
+
+# PROFESSIONAL EXPERIENCE
+## Senior Python Developer | Current Company | 2020-Present
+- Developed and deployed Python-based microservices architecture serving 50,000+ daily users
+- Implemented AWS cloud solutions reducing infrastructure costs by 35%
+- Led cross-functional teams in agile development environment
+- Optimized database queries improving application performance by 40%
+
+## Software Developer | Previous Company | 2018-2020
+- Built full-stack web applications using React and Django
+- Collaborated on DevOps implementation reducing deployment time by 60%
+
+# EDUCATION
+Bachelor of Science in Computer Science | University Name | 2014-2018
+
+# CERTIFICATIONS
+• Google Professional Cloud Developer
+• AWS Cloud Practitioner (Pursuing AWS Solutions Architect)
+
+*Note: CV tailored to match job requirements while maintaining authenticity and professional standards*</textarea>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="downloadCV()">📥 Download CV (Word)</button>
+                        <button class="btn btn-primary" onclick="generateCoverLetter()">✉️ Generate Cover Letter</button>
+                        <button class="btn btn-outline" onclick="showGapAnalysis(currentJob)">← Back to Gap Analysis</button>
+                    </div>
+                </div>
+                
+                <!-- Cover Letter Generator -->
+                <div id="coverLetterPanel" class="panel cover-letter">
+                    <h2>📄 AI-Generated Cover Letter</h2>
+                    <p style="color: #666; margin-bottom: 15px;">Personalized cover letter generated based on your CV and the job requirements.</p>
+                    <textarea id="coverLetterEditor">
+[Your Name]
+[Your Address]
+[City, State, ZIP]
+[Email]
+[Phone Number]
+[Date]
+
+Hiring Manager
+Tech Corp
+[Company Address]
+
+Dear Hiring Manager,
+
+I am writing to express my enthusiastic interest in the Senior Python Developer position at Tech Corp, as advertised on your company website. With over 5 years of experience in Python development and AWS cloud solutions, I am confident in my ability to contribute significantly to your engineering team.
+
+My technical expertise aligns closely with your requirements, particularly in:
+- Python development for scalable applications
+- AWS cloud infrastructure and services
+- Microservices architecture and implementation
+- Database optimization and performance tuning
+
+In my current role as Senior Python Developer, I have successfully led the development of microservices architecture serving 50,000+ daily users and implemented AWS solutions that reduced infrastructure costs by 35%. I am particularly impressed by Tech Corp's innovative approach to [specific company achievement or value], and I am eager to contribute to your continued success.
+
+I have taken the initiative to address the specific requirements mentioned in your job description, including expanding my knowledge in Docker and Kubernetes containerization, and I am currently pursuing AWS Solutions Architect certification to further enhance my cloud expertise.
+
+Thank you for considering my application. I am excited about the opportunity to discuss how my skills and experience can benefit Tech Corp and contribute to your team's objectives. I am available for an interview at your earliest convenience.
+
+Sincerely,
+[Your Name]</textarea>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="downloadCoverLetter()">📥 Download Cover Letter</button>
+                        <button class="btn btn-outline" onclick="showCVEditor()">← Edit Cover Letter</button>
+                    </div>
+                </div>
+                
+                <!-- Completion Panel -->
+                <div id="completionPanel" class="panel completion-panel">
+                    <h2>✅ Application Complete!</h2>
+                    <div style="background: #f0fdf4; padding: 25px; border-radius: 8px; margin: 20px 0; text-align: center; border: 1px solid #a7f3d0;">
+                        <p style="color: #059669; font-weight: 600; font-size: 18px; margin-bottom: 10px;">🎉 Opportunity Successfully Applied!</p>
+                        <p style="color: #64748b; margin-bottom: 15px;">Your application has been processed and marked as completed.</p>
+                        <div style="background: white; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                            <p style="color: #374151; margin: 5px 0;"><strong>Company:</strong> Tech Corp</p>
+                            <p style="color: #374151; margin: 5px 0;"><strong>Position:</strong> Senior Python Developer</p>
+                            <p style="color: #374151; margin: 5px 0;"><strong>Applied Date:</strong> October 11, 2024</p>
+                            <p style="color: #374151; margin: 5px 0;"><strong>Status:</strong> Application Submitted</p>
+                        </div>
+                        <p style="color: #059669; font-weight: 600;">✅ Saved to Notion database</p>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="newSearch()">🔍 Find More Opportunities</button>
+                        <button class="btn btn-outline" onclick="showPage('home')">🏠 Return to Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Reset JobMatch panels when navigating away
+            if (pageId !== 'jobmatch') {
+                hideAllPanels();
+            }
+            
+            // Scroll to top when changing pages
+            window.scrollTo(0, 0);
+        }
+
+        // JobMatch AI Functionality
+        let currentJob = null;
+        
+        function showGapAnalysis(jobId) {
+            currentJob = jobId;
+            hideAllPanels();
+            
+            // Update job title based on selection
+            const jobTitles = {
+                1: 'Tech Corp - Senior Python Developer',
+                2: 'Data Systems Inc - Data Scientist',
+                3: 'Cloud Solutions - DevOps Engineer',
+                4: 'FinTech Global - Full Stack Developer'
+            };
+            document.getElementById('analysisJobTitle').textContent = jobTitles[jobId];
+            
+            document.getElementById('gapAnalysisPanel').style.display = 'block';
+            document.getElementById('gapAnalysisPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function alignCV() {
+            hideAllPanels();
+            document.getElementById('cvEditorPanel').style.display = 'block';
+            document.getElementById('cvEditorPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showCVEditor() {
+            hideAllPanels();
+            document.getElementById('cvEditorPanel').style.display = 'block';
+            document.getElementById('cvEditorPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function generateCoverLetter() {
+            hideAllPanels();
+            document.getElementById('coverLetterPanel').style.display = 'block';
+            document.getElementById('coverLetterPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function disregardOpportunity() {
+            if (currentJob) {
+                const opportunityRow = document.querySelector([data-job="${currentJob}"]);
+                if (opportunityRow) {
+                    opportunityRow.style.display = 'none';
+                    alert('🚫 Opportunity disregarded and will not show again.');
+                }
+            }
+            hideAllPanels();
+        }
+        
+        function downloadCV() {
+            const cvContent = document.getElementById('cvEditor').value;
+            downloadFile(cvContent, Aligned_CV_${currentJob}.docx, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            
+            // Ask about cover letter
+            setTimeout(() => {
+                if (confirm('Would you like to generate a cover letter for this application?')) {
+                    generateCoverLetter();
+                } else {
+                    showCompletion();
+                }
+            }, 1000);
+        }
+        
+        function downloadCoverLetter() {
+            const clContent = document.getElementById('coverLetterEditor').value;
+            downloadFile(clContent, Cover_Letter_${currentJob}.docx, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            
+            // Ask if task is over
+            setTimeout(() => {
+                if (confirm('Application ready! Mark this opportunity as applied?')) {
+                    showCompletion();
+                }
+            }, 1000);
+        }
+        
+        function showCompletion() {
+            hideAllPanels();
+            document.getElementById('completionPanel').style.display = 'block';
+            document.getElementById('completionPanel').scrollIntoView({ behavior: 'smooth' });
+            
+            // Mark opportunity as applied
+            if (currentJob) {
+                const opportunityRow = document.querySelector([data-job="${currentJob}"]);
+                if (opportunityRow) {
+                    const statusDiv = opportunityRow.querySelector('.status-new');
+                    if (statusDiv) {
+                        statusDiv.textContent = 'Applied';
+                        statusDiv.className = 'status-applied';
+                        
+                        // Disable the apply button
+                        const applyButton = opportunityRow.querySelector('.btn-primary');
+                        applyButton.textContent = 'Applied ✓';
+                        applyButton.disabled = true;
+                        applyButton.style.background = '#9ca3af';
+                    }
+                }
+            }
+        }
+        
+        function newSearch() {
+            hideAllPanels();
+            alert('🔄 Starting new opportunity search... Loading fresh job matches.');
+            // Scroll back to opportunities table
+            document.querySelector('.opportunities-table').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function hideAllPanels() {
+            const panels = document.querySelectorAll('.panel');
+            panels.forEach(panel => {
+                panel.style.display = 'none';
+            });
+        }
+        
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Show download confirmation
+            alert(✅ File downloaded: ${filename});
+        }
+        
+        // Initialize - hide all JobMatch panels
+        hideAllPanels();
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add loading animation to buttons
+            const buttons = document.querySelectorAll('.btn, .nav-btn, .cta-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = 
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.6);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                    ;
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = 
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        ;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>]
