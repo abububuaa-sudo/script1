@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atlas JobMatch</title>
+  <title>Atlas JobMatch — Connected + Auth</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -23,8 +23,11 @@
     <section id="page-home" class="page active">
       <div class="hero">
         <h1>Welcome to Atlas</h1>
-        <p>Revolutionizing the way talent meets opportunity. Our AI-powered platform connects you with your dream job through intelligent matching and automated applications.</p>
-        <button class="cta-btn" onclick="showPage('jobmatch')">Discover Opportunities</button>
+        <p>AI‑powered matching with ATS‑optimized applications. This build includes user registration/login.</p>
+        <div class="hero-actions">
+          <button class="cta-btn" onclick="showPage('jobmatch')">Discover Opportunities</button>
+          <button class="cta-btn ghost" onclick="openAuth()">Register / Log in</button>
+        </div>
       </div>
     </section>
 
@@ -32,14 +35,34 @@
       <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
       <div class="about-content">
         <h2>Our Team</h2>
-        <div class="team-grid">
-          <!-- Team cards inserted via JS -->
-        </div>
+        <div class="team-grid"></div>
       </div>
     </section>
 
     <section id="page-jobmatch" class="page">
       <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+
+      <div class="api-bar">
+        <div>API: <span id="apiBaseLabel"></span></div>
+        <div>User: <span id="userLabel">Guest</span></div>
+        <div class="api-actions">
+          <button class="small-btn" onclick="promptApiBase()">Set API</button>
+          <button class="small-btn" onclick="healthCheck()">Health</button>
+          <button class="small-btn" onclick="openAuth()">Auth</button>
+          <button class="small-btn danger" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div class="cv-intro">
+        <h3>Paste your CV to enable AI matching (requires login)</h3>
+        <textarea id="cvIntroArea" placeholder="Paste your CV/resume text here..."></textarea>
+        <div class="row">
+          <button class="primary" onclick="runAiMatch()">Run AI Match</button>
+          <button onclick="saveCvLocal()">Save CV</button>
+          <span id="matchStatus" class="muted"></span>
+        </div>
+      </div>
+
       <div class="jobmatch-content">
         <h2>JobMatch AI — Opportunity Manager</h2>
         <div class="opportunities-table">
@@ -60,6 +83,35 @@
     </section>
   </div>
 
+  <!-- Auth modal -->
+  <div id="authModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Register or Log in</h3>
+      <div class="tabs">
+        <button id="tabSignup" class="tab active" onclick="switchAuth('signup')">Sign up</button>
+        <button id="tabLogin" class="tab" onclick="switchAuth('login')">Log in</button>
+      </div>
+      <div id="authSignup" class="auth-pane">
+        <input id="suName" placeholder="Full name" />
+        <input id="suEmail" placeholder="Email" type="email" />
+        <input id="suPass" placeholder="Password" type="password" />
+        <button class="primary" onclick="doSignup()">Create account</button>
+      </div>
+      <div id="authLogin" class="auth-pane hidden">
+        <input id="liEmail" placeholder="Email" type="email" />
+        <input id="liPass" placeholder="Password" type="password" />
+        <button class="primary" onclick="doLogin()">Log in</button>
+      </div>
+      <div class="row">
+        <button onclick="closeAuth()">Close</button>
+        <span id="authMsg" class="muted"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.DEFAULT_API_BASE = "https://atlas-backend.onrender.com";
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

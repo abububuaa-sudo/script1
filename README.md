@@ -1,18 +1,19 @@
-# script1 — Atlas JobMatch (static)
+# script1 — Connected + Auth
 
-Статический шаблон для GitHub Pages.
+This build adds user registration/login and JWT auth on top of the connected version.
 
-## Файлы
-- `index.html` — основная страница
-- `styles.css` — стили
-- `script.js` — логика (кнопки, панели, загрузка файлов)
-- `atlas-logo.svg` — логотип
-- `.nojekyll` — отключает Jekyll на GitHub Pages
+## How it works
+- Use “Auth” button to open the modal and **Sign up** or **Log in**.
+- Token is stored in `localStorage` and sent as `Authorization: Bearer` header.
+- AI endpoints (`/api/match`, `/api/align-cv`, `/api/cover-letter`) require login.
+- Jobs list (`/api/jobs`) is public.
 
-## Развёртывание
-1. Закинь эти файлы в репозиторий `abububuaa-sudo.github.io/script1/` (папка `script1`).
-2. Убедись, что включены GitHub Pages (Settings → Pages) для ветки `main`.
-3. Открой https://abububuaa-sudo.github.io/script1/
+## Setup
+1. Upload files to your GitHub Pages repo folder `script1/`.
+2. Set API base:
+   - Open with `?api=https://your-backend.com`
+   - or click “Set API” in the UI (saves to localStorage)
+   - default: `https://atlas-backend.onrender.com`
 
-## Дальше
-Когда захочешь подключить AI-бэкенд — скажи, и я дам fetch()‑пример и готовый сервер на Node/Express.
+## Security note
+This is a demo auth suitable for MVP. For production, move to a real DB and enable HTTPS only, rate limits, and stronger validation.
