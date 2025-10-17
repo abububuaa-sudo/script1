@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atlas JobMatch — Connected + Auth</title>
+  <title>Atlas JobMatch — Fixed Auth + AI</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -23,7 +23,7 @@
     <section id="page-home" class="page active">
       <div class="hero">
         <h1>Welcome to Atlas</h1>
-        <p>AI‑powered matching with ATS‑optimized applications. This build includes user registration/login.</p>
+        <p>Login + AI matching fixed for GitHub Pages + HTTPS backends.</p>
         <div class="hero-actions">
           <button class="cta-btn" onclick="showPage('jobmatch')">Discover Opportunities</button>
           <button class="cta-btn ghost" onclick="openAuth()">Register / Log in</button>
@@ -110,7 +110,8 @@
   </div>
 
   <script>
-    window.DEFAULT_API_BASE = "https://atlas-backend.onrender.com";
+    // Change to your backend URL after deploy OR set via Set API button or ?api=
+    window.DEFAULT_API_BASE = "";
   </script>
   <script src="script.js"></script>
 </body>

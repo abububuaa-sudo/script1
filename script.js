@@ -1,45 +1,40 @@
-// script.js (connected + auth)
 let currentJobId = null;
-
-// API base
-const DEFAULT_API_BASE = (window.DEFAULT_API_BASE || "https://atlas-backend.onrender.com").trim();
+const DEFAULT_API_BASE = (window.DEFAULT_API_BASE || "").trim();
 const PARAM_API = new URLSearchParams(location.search).get("api");
-const API_BASE = (PARAM_API || localStorage.getItem("API_BASE") || DEFAULT_API_BASE).replace(/\/+$/,"");
+const API_BASE = (PARAM_API || localStorage.getItem("API_BASE") || DEFAULT_API_BASE).replace(/\/+$/, "");
 
 function setLabel(id, txt){ const el = document.getElementById(id); if (el) el.textContent = txt; }
+function $(s){ return document.querySelector(s); }
+function $all(s){ return document.querySelectorAll(s); }
 
 document.addEventListener("DOMContentLoaded", () => {
-  setLabel("apiBaseLabel", API_BASE || "not set");
+  setLabel("apiBaseLabel", API_BASE || "(set with Set API)");
   updateUserLabel();
   const saved = localStorage.getItem("CV_TEXT");
-  if (saved) { const a = document.getElementById("cvIntroArea"); if (a) a.value = saved; }
+  if (saved) { const a = $("#cvIntroArea"); if (a) a.value = saved; }
 });
 
 // Auth storage
 function getToken(){ return localStorage.getItem("TOKEN") || null; }
 function setToken(tok){ if (tok) localStorage.setItem("TOKEN", tok); else localStorage.removeItem("TOKEN"); }
 function getAuthHeader(){ const t = getToken(); return t ? { "Authorization": "Bearer " + t } : {}; }
-function updateUserLabel(){
-  const name = localStorage.getItem("USER_NAME");
-  setLabel("userLabel", name ? name : "Guest");
-}
+function updateUserLabel(){ const name = localStorage.getItem("USER_NAME"); setLabel("userLabel", name ? name : "Guest"); }
 
-// Auth modal logic
-function openAuth(){ document.getElementById("authModal").classList.remove("hidden"); }
-function closeAuth(){ document.getElementById("authModal").classList.add("hidden"); }
+// Auth modal
+function openAuth(){ $("#authModal").classList.remove("hidden"); }
+function closeAuth(){ $("#authModal").classList.add("hidden"); }
 function switchAuth(tab){
-  const su = document.getElementById("authSignup");
-  const li = document.getElementById("authLogin");
-  const tsu = document.getElementById("tabSignup");
-  const tli = document.getElementById("tabLogin");
+  const su = $("#authSignup"), li = $("#authLogin");
+  const tsu = $("#tabSignup"), tli = $("#tabLogin");
   if (tab === 'signup'){ su.classList.remove("hidden"); li.classList.add("hidden"); tsu.classList.add("active"); tli.classList.remove("active"); }
   else { li.classList.remove("hidden"); su.classList.add("hidden"); tli.classList.add("active"); tsu.classList.remove("active"); }
 }
 async function doSignup(){
-  const name = document.getElementById("suName").value.trim();
-  const email = document.getElementById("suEmail").value.trim();
-  const password = document.getElementById("suPass").value.trim();
+  const name = $("#suName").value.trim();
+  const email = $("#suEmail").value.trim();
+  const password = $("#suPass").value.trim();
   setLabel("authMsg","");
+  if (!API_BASE){ setLabel("authMsg","Set API first."); return; }
   if (!name || !email || !password){ setLabel("authMsg","Fill name, email, password"); return; }
   try{
     const r = await fetch(`${API_BASE}/api/auth/signup`, {
@@ -53,12 +48,13 @@ async function doSignup(){
     updateUserLabel();
     setLabel("authMsg","Account created ✅");
     setTimeout(closeAuth, 500);
-  }catch(e){ setLabel("authMsg","Network error"); }
+  }catch(e){ setLabel("authMsg","Network/CORS error"); }
 }
 async function doLogin(){
-  const email = document.getElementById("liEmail").value.trim();
-  const password = document.getElementById("liPass").value.trim();
+  const email = $("#liEmail").value.trim();
+  const password = $("#liPass").value.trim();
   setLabel("authMsg","");
+  if (!API_BASE){ setLabel("authMsg","Set API first."); return; }
   if (!email || !password){ setLabel("authMsg","Fill email, password"); return; }
   try{
     const r = await fetch(`${API_BASE}/api/auth/login`, {
@@ -72,7 +68,7 @@ async function doLogin(){
     updateUserLabel();
     setLabel("authMsg","Logged in ✅");
     setTimeout(closeAuth, 500);
-  }catch(e){ setLabel("authMsg","Network error"); }
+  }catch(e){ setLabel("authMsg","Network/CORS error"); }
 }
 function logout(){
   setToken(null);
@@ -84,13 +80,14 @@ function logout(){
 // API helpers
 function promptApiBase(){
   const cur = API_BASE;
-  const v = prompt("Enter API base URL", cur);
+  const v = prompt("Enter API base URL (e.g. https://your-backend.onrender.com)", cur);
   if (!v) return;
   localStorage.setItem("API_BASE", v);
   alert("Saved. Reload the page.");
 }
 async function healthCheck(){
   setLabel("matchStatus","Checking...");
+  if (!API_BASE){ setLabel("matchStatus","Set API first."); return; }
   try{
     const r = await fetch(`${API_BASE}/api/health`);
     const js = await r.json();
@@ -99,17 +96,14 @@ async function healthCheck(){
 }
 
 function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  $all('.page').forEach(p => p.classList.remove('active'));
   const el = document.getElementById("page-" + page);
   if (el) el.classList.add('active');
   hidePanels();
   if (page === 'jobmatch') initJobmatch();
   if (page === 'about') renderTeam();
 }
-
-function hidePanels() {
-  document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-}
+function hidePanels(){ $all('.panel').forEach(p => p.style.display = 'none'); }
 
 const TEAM = [
   { name: "Vera Shaptala", role: "Founding Team", avatar: null, linkedin: "https://ca.linkedin.com/in/vera-shaptala-5aaab534a", blurb: "Entrepreneurial mindset and cross‑functional leadership across product, ops, and partnerships." },
@@ -117,7 +111,6 @@ const TEAM = [
   { name: "Elena Rodriguez", role: "Head of Product", avatar: null, linkedin: "#", blurb: "User experience and product strategy in HR tech." },
   { name: "David Kim", role: "Lead Developer", avatar: null, linkedin: "#", blurb: "Full‑stack development and system architecture." },
 ];
-
 function renderTeam() {
   const grid = document.querySelector('.team-grid');
   grid.innerHTML = '';
@@ -142,7 +135,6 @@ async function initJobmatch(){
   await fetchJobs();
   renderJobs();
 }
-
 async function fetchJobs(){
   try{
     const r = await fetch(`${API_BASE}/api/jobs`);
@@ -156,7 +148,6 @@ async function fetchJobs(){
     ];
   }
 }
-
 function renderJobs() {
   const container = document.getElementById('jobs-container');
   container.innerHTML = '';
@@ -174,7 +165,6 @@ function renderJobs() {
     container.appendChild(row);
   });
 }
-
 function getScoreFor(jobId){
   if (!lastMatchResults) return null;
   const item = lastMatchResults.find(x => x.id === jobId);
@@ -184,6 +174,7 @@ function getScoreFor(jobId){
 async function runAiMatch(){
   const status = document.getElementById("matchStatus");
   const cv = document.getElementById("cvIntroArea").value.trim();
+  if (!API_BASE){ status.textContent = "Set API first."; return; }
   if (!cv){ alert("Please paste your CV first."); return; }
   status.textContent = "Matching...";
   try{
@@ -192,16 +183,19 @@ async function runAiMatch(){
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ cvText: cv })
     });
+    const text = await r.text();
+    let js;
+    try { js = JSON.parse(text); } catch { js = { error: text }; }
     if (!r.ok){
-      const msg = await r.json().catch(()=>({}));
-      status.textContent = (msg.error || "Auth required");
+      status.textContent = js.error ? `Error: ${js.error}` : "Auth required";
       return;
     }
-    const js = await r.json();
     lastMatchResults = js.results || null;
     renderJobs();
     status.textContent = "Match scores updated ✅";
-  }catch(e){ status.textContent = "Match request failed ❌"; }
+  }catch(e){
+    status.textContent = "Match request failed ❌ (CORS/Network)";
+  }
 }
 
 function saveCvLocal(){
@@ -215,7 +209,6 @@ function applyJob(id) {
   hidePanels();
   showGapPanel();
 }
-
 function showGapPanel() {
   const panel = document.getElementById('panel-gap');
   const job = JOBS.find(j => j.id === currentJobId);
@@ -228,12 +221,11 @@ function showGapPanel() {
     <button onclick="hidePanels()">Back to Opportunities</button>
   `;
 }
-
 function buildGapsHtml(job){
   const cv = (document.getElementById("cvIntroArea")?.value || "").trim();
   if (!cv || !lastMatchResults){
     return `
-      <p class="muted">AI gaps unavailable (login, paste CV, press “Run AI Match”). Showing sample gaps:</p>
+      <p class="muted">AI gaps unavailable (login, set API, paste CV, press “Run AI Match”). Showing sample gaps:</p>
       <p>• Required Skills Missing: <strong>3</strong></p>
       <p>• Experience Gaps: <strong>2+ years</strong></p>
       <p>• Certification Gaps: <strong>1</strong></p>
@@ -336,7 +328,6 @@ function showComplete() {
     <button onclick="resetAll()">🏠 Return to Home</button>
   `;
 }
-
 function resetAll() { showPage('home'); currentJobId = null; }
 
 // helper download
@@ -351,3 +342,6 @@ function downloadFile(content, filename, mime) {
   a.remove();
   URL.revokeObjectURL(url);
 }
+
+// nav init
+showPage('home');
